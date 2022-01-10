@@ -92,9 +92,9 @@ rm -f m4/{libtool,lt*}.m4 libcharset/m4/{libtool,lt*}.m4
 
 # Remove documentation which duplicates what is already in
 # Fedora native packages.
-rm -rf $RPM_BUILD_ROOT%{cygwin32_docdir}/libiconv/
+rm -rf $RPM_BUILD_ROOT%{cygwin32_docdir}
 rm -rf $RPM_BUILD_ROOT%{cygwin32_mandir}
-rm -rf $RPM_BUILD_ROOT%{cygwin64_docdir}/libiconv/
+rm -rf $RPM_BUILD_ROOT%{cygwin64_docdir}
 rm -rf $RPM_BUILD_ROOT%{cygwin64_mandir}
 
 # If cygwin-gettext was installed during the build, remove the *.mo
