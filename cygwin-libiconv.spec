@@ -1,8 +1,8 @@
 %{?cygwin_package_header}
 
 Name:      cygwin-libiconv
-Version:   1.14
-Release:   6%{?dist}
+Version:   1.16
+Release:   1%{?dist}
 Summary:   GNU libraries and utilities for character set conversion
 
 License:   GPLv2+ and LGPLv2+
@@ -11,9 +11,8 @@ URL:       http://www.gnu.org/software/libiconv/
 BuildArch: noarch
 
 Source0:   http://ftp.gnu.org/pub/gnu/libiconv/libiconv-%{version}.tar.gz
-Patch0:    libiconv-1.14-wchar.patch
-Patch1:    libiconv-1.14-reloc.patch
-Patch2:    libiconv-1.14-aliases.patch
+Patch0:    libiconv-1.16-wchar.patch
+Patch1:    libiconv-1.16-aliases.patch
 
 BuildRequires: cygwin32-filesystem
 BuildRequires: cygwin32-gcc
@@ -25,7 +24,11 @@ BuildRequires: cygwin64-gcc
 BuildRequires: cygwin64-binutils
 BuildRequires: cygwin64
 
-BuildRequires: autoconf, automake, cygwin-libtool-base, gettext-devel
+BuildRequires: autoconf
+BuildRequires: automake
+BuildRequires: cygwin-libtool-base
+BuildRequires: gettext-devel
+BuildRequires: make
 
 # There's a quasi-circular dependency between cygwin-libiconv and
 # cygwin-gettext.  If gettext is installed when you build this then
@@ -71,11 +74,8 @@ Static version of Iconv library for Cygwin x86_64 toolchain.
 
 
 %prep
-%setup -q -n libiconv-%{version}
+%autosetup -p1 -n libiconv-%{version}
 rm -f m4/libtool.m4 m4/lt*.m4
-%patch0 -p2
-%patch1 -p2
-%patch2 -p2
 %cygwin_autoreconf -I `pwd`/m4 -I `pwd`/srcm4
 
 
@@ -88,7 +88,7 @@ rm -f m4/libtool.m4 m4/lt*.m4
 
 
 %install
-%cygwin_make install DESTDIR=$RPM_BUILD_ROOT
+%cygwin_make_install
 
 # Remove documentation which duplicates what is already in
 # Fedora native packages.
@@ -142,6 +142,9 @@ rm -f $RPM_BUILD_ROOT%{cygwin64_libdir}/charset.alias
 
 
 %changelog
+* Mon Jan 10 2022 Yaakov Selkowitz <yselkowi@redhat.com> - 1.16-1
+- new version
+
 * Tue Dec 05 2017 Yaakov Selkowitz <yselkowi@redhat.com> - 1.14-6
 - Add aliases patch
 
