@@ -75,8 +75,8 @@ Static version of Iconv library for Cygwin x86_64 toolchain.
 
 %prep
 %autosetup -p1 -n libiconv-%{version}
-rm -f m4/libtool.m4 m4/lt*.m4
-%cygwin_autoreconf -I `pwd`/m4 -I `pwd`/srcm4
+rm -f m4/{libtool,lt*}.m4 libcharset/m4/{libtool,lt*}.m4
+%cygwin_autoreconf -I `pwd`/m4 -I `pwd`/srcm4 -I `pwd`/libcharset/m4
 
 
 %build
