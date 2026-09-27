@@ -2,7 +2,7 @@
 
 Name:      cygwin-libiconv
 Version:   1.16
-Release:   1%{?dist}
+Release:   2%{?dist}
 Summary:   GNU libraries and utilities for character set conversion
 
 License:   GPLv2+ and LGPLv2+
@@ -10,7 +10,7 @@ Group:     Development/Libraries
 URL:       http://www.gnu.org/software/libiconv/
 BuildArch: noarch
 
-Source0:   http://ftp.gnu.org/pub/gnu/libiconv/libiconv-%{version}.tar.gz
+Source0:   https://ftp.gnu.org/pub/gnu/libiconv/libiconv-%{version}.tar.gz
 Patch0:    libiconv-1.16-wchar.patch
 Patch1:    libiconv-1.16-aliases.patch
 
@@ -23,6 +23,11 @@ BuildRequires: cygwin64-filesystem
 BuildRequires: cygwin64-gcc
 BuildRequires: cygwin64-binutils
 BuildRequires: cygwin64
+
+BuildRequires: cygwin-aarch64-filesystem
+BuildRequires: cygwin-aarch64-gcc
+BuildRequires: cygwin-aarch64-binutils
+BuildRequires: cygwin-aarch64
 
 BuildRequires: autoconf
 BuildRequires: automake
@@ -41,14 +46,14 @@ BuildRequires: make
 Cygwin Iconv library
 
 %package -n cygwin32-libiconv
-Summary:        Cygwin32 Iconv library
+Summary:        Cygwin i686 Iconv library
 Group:          Development/Libraries
 
 %description -n cygwin32-libiconv
 Iconv library for Cygwin i686 toolchain.
 
 %package -n cygwin32-libiconv-static
-Summary:        Static version of the Cygwin Iconv library
+Summary:        Static version of the i686 Cygwin Iconv library
 Group:          Development/Libraries
 Requires:       cygwin32-libiconv = %{version}-%{release}
 
@@ -56,19 +61,34 @@ Requires:       cygwin32-libiconv = %{version}-%{release}
 Static version of Iconv library for Cygwin i686 toolchain.
 
 %package -n cygwin64-libiconv
-Summary:        Cygwin64 Iconv library
+Summary:        Cygwin x86_64 Iconv library
 Group:          Development/Libraries
 
 %description -n cygwin64-libiconv
 Iconv library for Cygwin x86_64 toolchain.
 
 %package -n cygwin64-libiconv-static
-Summary:        Static version of the Cygwin Iconv library
+Summary:        Static version of the x86_64 Cygwin Iconv library
 Group:          Development/Libraries
 Requires:       cygwin64-libiconv = %{version}-%{release}
 
 %description -n cygwin64-libiconv-static
 Static version of Iconv library for Cygwin x86_64 toolchain.
+
+%package -n cygwin-aarch64-libiconv
+Summary:        Cygwin aarch64 Iconv library
+Group:          Development/Libraries
+
+%description -n cygwin-aarch64-libiconv
+Iconv library for Cygwin aarch64 toolchain.
+
+%package -n cygwin-aarch64-libiconv-static
+Summary:        Static version of the aarch64 Cygwin Iconv library
+Group:          Development/Libraries
+Requires:       cygwin-aarch64-libiconv = %{version}-%{release}
+
+%description -n cygwin-aarch64-libiconv-static
+Static version of Iconv library for Cygwin aarch64 toolchain.
 
 %{?cygwin_debug_package}
 
@@ -80,6 +100,10 @@ rm -f m4/{libtool,lt*}.m4 libcharset/m4/{libtool,lt*}.m4
 
 
 %build
+%global cygwin32_cflags %{cygwin32_cflags} -std=gnu17
+%global cygwin64_cflags %{cygwin64_cflags} -std=gnu17
+%global cygwin_aarch64_cflags %{cygwin_aarch64_cflags} -std=gnu17
+
 %cygwin_configure \
   --enable-static --enable-shared \
   am_cv_proto_iconv_arg1= \
@@ -96,11 +120,14 @@ rm -rf $RPM_BUILD_ROOT%{cygwin32_docdir}
 rm -rf $RPM_BUILD_ROOT%{cygwin32_mandir}
 rm -rf $RPM_BUILD_ROOT%{cygwin64_docdir}
 rm -rf $RPM_BUILD_ROOT%{cygwin64_mandir}
+rm -rf $RPM_BUILD_ROOT%{cygwin_aarch64_docdir}
+rm -rf $RPM_BUILD_ROOT%{cygwin_aarch64_mandir}
 
 # If cygwin-gettext was installed during the build, remove the *.mo
 # files.  If cygwin-gettext wasn't installed then there won't be any.
 rm -rf $RPM_BUILD_ROOT%{cygwin32_datadir}/locale
 rm -rf $RPM_BUILD_ROOT%{cygwin64_datadir}/locale
+rm -rf $RPM_BUILD_ROOT%{cygwin_aarch64_datadir}/locale
 
 # We intentionally don't ship *.la files
 find $RPM_BUILD_ROOT -name '*.la' -delete
@@ -110,6 +137,8 @@ rm -f $RPM_BUILD_ROOT%{cygwin32_bindir}/*.exe
 rm -f $RPM_BUILD_ROOT%{cygwin32_libdir}/charset.alias
 rm -f $RPM_BUILD_ROOT%{cygwin64_bindir}/*.exe
 rm -f $RPM_BUILD_ROOT%{cygwin64_libdir}/charset.alias
+rm -f $RPM_BUILD_ROOT%{cygwin_aarch64_bindir}/*.exe
+rm -f $RPM_BUILD_ROOT%{cygwin_aarch64_libdir}/charset.alias
 
 
 %files -n cygwin32-libiconv
@@ -140,8 +169,25 @@ rm -f $RPM_BUILD_ROOT%{cygwin64_libdir}/charset.alias
 %{cygwin64_libdir}/libcharset.a
 %{cygwin64_libdir}/libiconv.a
 
+%files -n cygwin-aarch64-libiconv
+%doc COPYING COPYING.LIB
+%{cygwin_aarch64_bindir}/cygcharset-1.dll
+%{cygwin_aarch64_bindir}/cygiconv-2.dll
+%{cygwin_aarch64_includedir}/iconv.h
+%{cygwin_aarch64_includedir}/libcharset.h
+%{cygwin_aarch64_includedir}/localcharset.h
+%{cygwin_aarch64_libdir}/libcharset.dll.a
+%{cygwin_aarch64_libdir}/libiconv.dll.a
+
+%files -n cygwin-aarch64-libiconv-static
+%{cygwin_aarch64_libdir}/libcharset.a
+%{cygwin_aarch64_libdir}/libiconv.a
+
 
 %changelog
+* Sun Sep 27 2026 Jon Turney <jon.turney@dronecode.org.uk> - 1.16-2
+- add aarch64
+
 * Mon Jan 10 2022 Yaakov Selkowitz <yselkowi@redhat.com> - 1.16-1
 - new version
 
@@ -166,4 +212,3 @@ rm -f $RPM_BUILD_ROOT%{cygwin64_libdir}/charset.alias
 
 * Wed Feb 16 2011 Yaakov Selkowitz <cygwin-ports-general@lists.sourceforge.net> - 1.13.1-1
 - Initial RPM release, largely based on mingw32-iconv.
-
