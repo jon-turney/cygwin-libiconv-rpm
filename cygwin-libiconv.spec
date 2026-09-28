@@ -1,8 +1,8 @@
 %{?cygwin_package_header}
 
 Name:      cygwin-libiconv
-Version:   1.16
-Release:   2%{?dist}
+Version:   1.19
+Release:   1%{?dist}
 Summary:   GNU libraries and utilities for character set conversion
 
 License:   GPLv2+ and LGPLv2+
@@ -11,8 +11,9 @@ URL:       http://www.gnu.org/software/libiconv/
 BuildArch: noarch
 
 Source0:   https://ftp.gnu.org/pub/gnu/libiconv/libiconv-%{version}.tar.gz
-Patch0:    libiconv-1.16-wchar.patch
-Patch1:    libiconv-1.16-aliases.patch
+Patch0:    1.17-wchar.patch
+Patch1:    1.18-cross-install.patch
+Patch2:    1.19-aliases.patch
 
 BuildRequires: cygwin32-filesystem
 BuildRequires: cygwin32-gcc
@@ -94,16 +95,12 @@ Static version of Iconv library for Cygwin aarch64 toolchain.
 
 
 %prep
-%autosetup -p1 -n libiconv-%{version}
+%autosetup -p2 -n libiconv-%{version}
 rm -f m4/{libtool,lt*}.m4 libcharset/m4/{libtool,lt*}.m4
 %cygwin_autoreconf -I `pwd`/m4 -I `pwd`/srcm4 -I `pwd`/libcharset/m4
 
 
 %build
-%global cygwin32_cflags %{cygwin32_cflags} -std=gnu17
-%global cygwin64_cflags %{cygwin64_cflags} -std=gnu17
-%global cygwin_aarch64_cflags %{cygwin_aarch64_cflags} -std=gnu17
-
 %cygwin_configure \
   --enable-static --enable-shared \
   am_cv_proto_iconv_arg1= \
@@ -185,6 +182,9 @@ rm -f $RPM_BUILD_ROOT%{cygwin_aarch64_libdir}/charset.alias
 
 
 %changelog
+* Mon Sep 28 2026 Jon Turney <jon.turney@dronecode.org.uk> - 1.19-1
+- new version
+
 * Sun Sep 27 2026 Jon Turney <jon.turney@dronecode.org.uk> - 1.16-2
 - add aarch64
 
