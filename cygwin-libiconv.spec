@@ -101,6 +101,8 @@ rm -f m4/{libtool,lt*}.m4 libcharset/m4/{libtool,lt*}.m4
 
 
 %build
+%global cygwin_aarch64_cflags %{cygwin_aarch64_cflags} -O0
+
 %cygwin_configure \
   --enable-static --enable-shared \
   am_cv_proto_iconv_arg1= \
